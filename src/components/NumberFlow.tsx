@@ -62,7 +62,8 @@ export default function NumberFlow({
     () => (typeof trend === 'function' ? trend(prevData.value, data.value) : trend),
     [trend, prevData.value, data.value]
   );
-  const computedAnimated = animated && useCanAnimate({ respectMotionPreference });
+  const canAnimate = useCanAnimate({ respectMotionPreference });
+  const computedAnimated = animated && canAnimate;
   const animateIn = useIsMounted();
 
   const timings = useMemo(

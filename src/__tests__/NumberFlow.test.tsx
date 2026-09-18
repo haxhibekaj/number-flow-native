@@ -215,6 +215,19 @@ describe('NumberFlow', () => {
     expect(onAnimationsStart).not.toHaveBeenCalled();
   });
 
+  test('can toggle animated on and off across renders', async () => {
+    const onAnimationsStart = jest.fn();
+    const { rerender } = await render(
+      <NumberFlow value={1} animated={false} onAnimationsStart={onAnimationsStart} />
+    );
+
+    await rerender(<NumberFlow value={2} animated onAnimationsStart={onAnimationsStart} />);
+    await rerender(<NumberFlow value={3} animated onAnimationsStart={onAnimationsStart} />);
+    await rerender(<NumberFlow value={4} animated={false} onAnimationsStart={onAnimationsStart} />);
+
+    expect(onAnimationsStart).toHaveBeenCalledTimes(1);
+  });
+
   test('does not animate when the system prefers reduced motion', async () => {
     jest.mocked(useReducedMotion).mockReturnValue(true);
     const onAnimationsStart = jest.fn();
