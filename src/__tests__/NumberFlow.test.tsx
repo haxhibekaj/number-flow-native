@@ -1,14 +1,23 @@
 import React from 'react';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
-import { getAnimatedStyle as getAnimatedStyleUntyped, useReducedMotion } from 'react-native-reanimated';
+import { getAnimatedStyle as getAnimatedStyleUntyped } from 'react-native-reanimated';
 import NumberFlow from '../components/NumberFlow';
 import { continuous } from '../plugins/continuous';
 
-jest.mock('react-native-reanimated', () => ({
-  __esModule: true,
-  ...jest.requireActual('react-native-reanimated'),
-  useReducedMotion: jest.fn(() => false),
-}));
+// Reanimated's real useReducedMotion holds no React state, so the mock adds a
+// real hook: calling it conditionally must break React's hook ordering.
+const mockReducedMotion = { value: false };
+jest.mock('react-native-reanimated', () => {
+  const ReactForMock = require('react');
+  return {
+    __esModule: true,
+    ...jest.requireActual('react-native-reanimated'),
+    useReducedMotion: () => {
+      ReactForMock.useState(null);
+      return mockReducedMotion.value;
+    },
+  };
+});
 
 type AnimatedStyle = { opacity: number; transform: { translateY: number }[] };
 // Reanimated's type for this helper is the web stub; the native Jest version returns the style.
@@ -26,7 +35,7 @@ const layoutColumn = (key: string) =>
 describe('NumberFlow', () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    jest.mocked(useReducedMotion).mockReturnValue(false);
+    mockReducedMotion.value = false;
   });
   afterEach(() => {
     jest.useRealTimers();
@@ -229,7 +238,7 @@ describe('NumberFlow', () => {
   });
 
   test('does not animate when the system prefers reduced motion', async () => {
-    jest.mocked(useReducedMotion).mockReturnValue(true);
+    mockReducedMotion.value = true;
     const onAnimationsStart = jest.fn();
     const { rerender } = await render(<NumberFlow value={1} onAnimationsStart={onAnimationsStart} />);
 
@@ -239,7 +248,7 @@ describe('NumberFlow', () => {
   });
 
   test('ignores reduced motion when respectMotionPreference is false', async () => {
-    jest.mocked(useReducedMotion).mockReturnValue(true);
+    mockReducedMotion.value = true;
     const onAnimationsStart = jest.fn();
     const { rerender } = await render(
       <NumberFlow value={1} respectMotionPreference={false} onAnimationsStart={onAnimationsStart} />
