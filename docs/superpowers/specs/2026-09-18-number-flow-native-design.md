@@ -21,7 +21,8 @@ Pure JS/TS, no native code, so it runs in Expo Go and in any bare RN app.
 | Layout shifts | Reanimated layout animations (`LinearTransition`, `FadeIn`, `FadeOut`) | Web NumberFlow measures before/after and animates deltas. RN has no sync layout reads, but Reanimated does the same job declaratively. |
 | Digit widths | `fontVariant: ['tabular-nums']` by default | Digit columns share one width so we never measure per-glyph widths. Overridable via `style`. |
 | Build | `tsc` → `lib/` (JS + d.ts); `react-native` field points at `src/` | Metro compiles TS from source; bundlers/TS get `lib/`. No Bob/Babel build pipeline needed. |
-| Tests | Jest `react-native` preset + `@testing-library/react-native` + Reanimated's `setUpTests()` | One runner for pure logic and component tests. |
+| Tests | Jest with `@react-native/jest-preset` + `@testing-library/react-native` 14 (async API) + Reanimated's `setUpTests()` and the `react-native-worklets/jest/resolver` | One runner for pure logic and component tests. |
+| Dev dependency versions | Pinned to Expo SDK 57's expectations (RN 0.86.3, React 19.2.3, Reanimated 4.5.1, Worklets 0.10.1) | With pnpm's hoisted linker the example and the library share one tree, and `expo install --check` must pass. |
 | Package manager | pnpm with `node-linker=hoisted` | Matches the original repo; hoisted linker is required for Metro. |
 | Example app | `example/` Expo workspace package | Verifies Expo compatibility from day one. |
 
@@ -131,10 +132,18 @@ children are hidden from assistive tech.
 
 ## Implementation plan (executed in order, TDD each step)
 
-1. Scaffold: package.json, tsconfig, jest, babel, license, spec.  ✔
-2. `formatter.ts` (+ fallback) with tests.
-3. `delta.ts`, `offset.ts`, `easing.ts` with tests.
-4. `plugins/continuous.ts` with tests.
-5. `types.ts`, context, `useAnimationsLifecycle` with tests.
-6. `Digit`/`DigitGlyph`/`Symbol`/`Section`/`NumberFlow` with component tests.
-7. `index.ts`, README, `example/` Expo app, typecheck + build.
+1. Scaffold: package.json, tsconfig, jest, babel, license, spec. ✔
+2. `formatter.ts` (+ fallback) with tests. ✔
+3. `delta.ts`, `offset.ts`, `easing.ts` with tests. ✔
+4. `plugins/continuous.ts` with tests. ✔
+5. `types.ts`, context, `useAnimationsLifecycle` with tests. ✔
+6. `Digit`/`DigitGlyph`/`Symbol`/`Section`/`NumberFlow` with component tests. ✔
+7. `index.ts`, README, `example/` Expo app, typecheck + build. ✔
+
+Verification on 2026-09-18: 61 Jest tests pass at 97.9% statement coverage,
+`tsc` clean for library and example, `expo install --check` clean, and
+`expo export --platform ios` bundles the example (962 modules) to Hermes bytecode.
+
+Not yet verified: running on a device or simulator. Layout animations,
+`overflow: hidden` clipping of the digit columns, and the `onLayout` height
+measurement need a visual check in the example app.
