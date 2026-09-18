@@ -1,0 +1,45 @@
+{
+  "name": "number-flow-native",
+  "version": "0.1.0",
+  "description": "An animated number component for React Native and Expo. A recreation of NumberFlow.",
+  "license": "MIT",
+  "author": "Ardit Xhaferi",
+  "keywords": [
+    "react-native",
+    "expo",
+    "number-flow",
+    "odometer",
+    "animated-number",
+    "number-animation",
+    "number-format",
+    "reanimated"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "sideEffects": false,
+  "files": [
+    "src",
+    "lib",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf lib coverage",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run test && pnpm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.73.0",
+    "react-native-reanimated": ">=3.6.0"
+  },
+  "packageManager": "pnpm@10.34.4",
+  "engines": {
+    "node": ">=18"
+  }
+}
