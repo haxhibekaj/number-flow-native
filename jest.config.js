@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
+  resolver: 'react-native-reanimated/jest/resolver',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/lib/', '/example/'],
   transformIgnorePatterns: [
