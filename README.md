@@ -9,10 +9,25 @@ digits are added or removed. Pure JS/TS, no native code, works in Expo Go.
 
 ## Install
 
+This package is published from a private GitHub repository, not npm. Install the
+peer dependencies with Expo so they match your SDK, then add the package itself
+pinned to a tag:
+
 ```sh
-npx expo install number-flow-native react-native-reanimated react-native-worklets \
+npx expo install react-native-reanimated react-native-worklets \
   @react-native-masked-view/masked-view expo-linear-gradient
+
+pnpm add github:haxhibekaj/number-flow-native#v0.1.0
 ```
+
+Pin a tag or a commit SHA rather than a branch. Git dependencies are not
+immutable, so a branch reference silently changes under you.
+
+Access needs a credential that can read the private repository. The GitHub CLI
+configures one for local work. For CI or EAS Build, expose a token or a
+deploy key at install time.
+
+The built output is committed to the repository, so no build runs on install.
 
 Bare React Native: install the same packages with your package manager and
 follow the Reanimated install guide (Babel plugin + pod install).
