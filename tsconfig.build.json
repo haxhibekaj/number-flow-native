@@ -4,11 +4,14 @@
     "noEmit": false,
     "outDir": "lib",
     "rootDir": "src",
-    // Node16 resolves to CommonJS here because package.json has no
-    // "type": "module", which keeps `main` loadable by Node-based tooling.
-    // Metro and bundlers read `react-native` / `source` and compile src instead.
-    "module": "Node16",
-    "moduleResolution": "Node16",
+    // CommonJS so `main` is a valid entry without "type": "module".
+    // Classic resolution on purpose: Node16 semantics refuse to emit `require`
+    // for ESM-only packages like Reanimated, which does not reflect how Metro
+    // resolves them. React Native apps use `react-native` / `source` anyway and
+    // compile from src, so this output exists for types and Node-based tooling.
+    "module": "CommonJS",
+    "moduleResolution": "Node10",
+    "ignoreDeprecations": "6.0",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
