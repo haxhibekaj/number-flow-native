@@ -31,7 +31,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run test && pnpm run build"
+    "prepublishOnly": "npm run clean && npm run typecheck && npm run test && npm run build",
+    "prepare": "tsc -p tsconfig.build.json"
   },
   "peerDependencies": {
     "@react-native-masked-view/masked-view": ">=0.3.0",
@@ -60,5 +61,13 @@
     "react-test-renderer": "19.2.3",
     "test-renderer": "^1.3.0",
     "typescript": "^6.0.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haxhibekaj/number-flow-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/haxhibekaj/number-flow-native/issues"
+  },
+  "homepage": "https://github.com/haxhibekaj/number-flow-native#readme"
 }
