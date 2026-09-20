@@ -1,0 +1,1 @@
+{"version":3,"file":"useCanAnimate.js","sourceRoot":"","sources":["../../src/hooks/useCanAnimate.ts"],"names":[],"mappings":";;AAKA,sCAGC;AARD,qEAA2D;AAI3D,yFAAyF;AACzF,SAAgB,aAAa,CAAC,EAAE,uBAAuB,GAAG,IAAI,KAAc,EAAE;IAC5E,MAAM,oBAAoB,GAAG,IAAA,0CAAgB,GAAE,CAAC;IAChD,OAAO,CAAC,uBAAuB,IAAI,CAAC,oBAAoB,CAAC;AAC3D,CAAC"}

@@ -33,6 +33,11 @@ jobs:
 
       - run: pnpm run build
 
+      # lib/ is committed so git installs work without running build scripts.
+      # Fail if it drifts from src.
+      - name: Check committed build is current
+        run: git diff --exit-code -- lib
+
       # Proves a consumer installing straight from git gets working entry points.
       - name: Verify package contents
         run: |
