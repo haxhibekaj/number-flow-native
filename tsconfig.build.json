@@ -4,10 +4,10 @@
     "noEmit": false,
     "outDir": "lib",
     "rootDir": "src",
-    // CommonJS so `main` is loadable by Node-based tooling. Metro and bundlers
-    // read the `react-native` / `source` fields and compile from src instead.
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    // Node16 resolves to CommonJS here because package.json has no
+    // "type": "module", which keeps `main` loadable by Node-based tooling.
+    // Metro and bundlers read `react-native` / `source` and compile src instead.
+    "module": "Node16",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
