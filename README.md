@@ -42,25 +42,25 @@ function Price({ value }: { value: number }) {
 
 ## Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `value` | `number \| string` | | The number to show. Strings keep full precision. |
-| `locales` | `Intl.LocalesArgument` | device | Locale(s) for formatting. |
-| `format` | `Intl.NumberFormatOptions` | | Formatting options. `scientific` and `engineering` notation aren't supported. |
-| `prefix` / `suffix` | `string` | | Custom text before or after the number. |
-| `trend` | `number \| (prev, next) => number` | `Math.sign(next - prev)` | `+1` digits always spin up, `-1` always down, `0` each digit picks its own direction. |
-| `digits` | `Record<number, { max?: number }>` | | Per-position digit config. For `342.5` the positions are `2, 1, 0, -1`. `{ 1: { max: 5 } }` makes a 0–59 clock wrap `59 → 00`. |
-| `transformTiming` | `{ duration, easing? }` | `900ms`, spring-like | Timing for layout moves and, unless `spinTiming` is set, digit spins. |
-| `spinTiming` | `{ duration, easing? }` | `transformTiming` | Timing for digit spins. |
-| `opacityTiming` | `{ duration, easing? }` | `450ms`, ease-out | Timing for fades. |
-| `animated` | `boolean` | `true` | `false` snaps to the new value and finishes any running animation. |
-| `respectMotionPreference` | `boolean` | `true` | Skip animations when the OS "reduce motion" setting is on. |
-| `plugins` | `Plugin[]` | | See [`continuous`](#continuous). |
-| `onAnimationsStart` / `onAnimationsFinish` | `() => void` | | Fired once per burst of updates. |
-| `style` | `TextStyle` | `fontVariant: ['tabular-nums']` | Applied to every glyph. |
-| `containerStyle` | `ViewStyle` | | Applied to the root row. |
-| `maskHeight` | `number` | `0.25em` | Height of the top and bottom fade. `0` disables it. |
-| `maskWidth` | `number` | `0.5em` | Width of the left and right fade. `0` disables it. |
+| Prop                                       | Type                               | Default                         | Description                                                                                                                    |
+| ------------------------------------------ | ---------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `value`                                    | `number \| string`                 |                                 | The number to show. Strings keep full precision.                                                                               |
+| `locales`                                  | `Intl.LocalesArgument`             | device                          | Locale(s) for formatting.                                                                                                      |
+| `format`                                   | `Intl.NumberFormatOptions`         |                                 | Formatting options. `scientific` and `engineering` notation aren't supported.                                                  |
+| `prefix` / `suffix`                        | `string`                           |                                 | Custom text before or after the number.                                                                                        |
+| `trend`                                    | `number \| (prev, next) => number` | `Math.sign(next - prev)`        | `+1` digits always spin up, `-1` always down, `0` each digit picks its own direction.                                          |
+| `digits`                                   | `Record<number, { max?: number }>` |                                 | Per-position digit config. For `342.5` the positions are `2, 1, 0, -1`. `{ 1: { max: 5 } }` makes a 0–59 clock wrap `59 → 00`. |
+| `transformTiming`                          | `{ duration, easing? }`            | `900ms`, spring-like            | Timing for layout moves and, unless `spinTiming` is set, digit spins.                                                          |
+| `spinTiming`                               | `{ duration, easing? }`            | `transformTiming`               | Timing for digit spins.                                                                                                        |
+| `opacityTiming`                            | `{ duration, easing? }`            | `450ms`, ease-out               | Timing for fades.                                                                                                              |
+| `animated`                                 | `boolean`                          | `true`                          | `false` snaps to the new value and finishes any running animation.                                                             |
+| `respectMotionPreference`                  | `boolean`                          | `true`                          | Skip animations when the OS "reduce motion" setting is on.                                                                     |
+| `plugins`                                  | `Plugin[]`                         |                                 | See [`continuous`](#continuous).                                                                                               |
+| `onAnimationsStart` / `onAnimationsFinish` | `() => void`                       |                                 | Fired once per burst of updates.                                                                                               |
+| `style`                                    | `TextStyle`                        | `fontVariant: ['tabular-nums']` | Applied to every glyph.                                                                                                        |
+| `containerStyle`                           | `ViewStyle`                        |                                 | Applied to the root row.                                                                                                       |
+| `maskHeight`                               | `number`                           | `0.25em`                        | Height of the top and bottom fade. `0` disables it.                                                                            |
+| `maskWidth`                                | `number`                           | `0.5em`                         | Width of the left and right fade. `0` disables it.                                                                             |
 
 Easing functions must be Reanimated worklets: anything from `Easing`, or
 `linearEasing([...])` which reproduces CSS `linear()` curves:

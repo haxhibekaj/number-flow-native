@@ -28,12 +28,6 @@ const usePreviousData = (data: Data): Data => {
   return history.prev;
 };
 
-const useIsMounted = (): boolean => {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true), []);
-  return isMounted;
-};
-
 export default function NumberFlow({
   value,
   locales,
@@ -69,7 +63,11 @@ export default function NumberFlow({
   );
   const canAnimate = useCanAnimate({ respectMotionPreference });
   const computedAnimated = animated && canAnimate;
-  const animateIn = useIsMounted();
+  // Parts only ever appear when the data changes, and on the very first render
+  // `usePreviousData` reports the same object it was given. So this is false on
+  // mount, which is exactly when entering animations should be suppressed, and
+  // needs no extra state, ref or effect of its own.
+  const animateIn = prevData !== data;
 
   const fontSize = getFontSize(style);
   const mask = useMemo(

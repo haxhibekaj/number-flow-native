@@ -12,8 +12,7 @@ type RawPartType = Intl.NumberFormatPartTypes | 'prefix' | 'suffix';
 type RawPart = { type: RawPartType; value: string };
 
 type UnkeyedIntegerPart =
-  | { type: 'integer'; value: number }
-  | { type: KeyedSymbolPart['type']; value: string };
+  { type: 'integer'; value: number } | { type: KeyedSymbolPart['type']; value: string };
 
 const normalizeType = (type: RawPartType): NumberPartType =>
   type === 'minusSign' || type === 'plusSign' ? 'sign' : type;
@@ -109,19 +108,33 @@ export function formatToData(
     const type = normalizeType(part.type);
     switch (type) {
       case 'integer':
-        return { ...state, seenNumber: true, integer: [...state.integer, ...splitDigits(part.value)] };
+        return {
+          ...state,
+          seenNumber: true,
+          integer: [...state.integer, ...splitDigits(part.value)],
+        };
       case 'group':
         return { ...state, integer: [...state.integer, { type, value: part.value }] };
       case 'decimal':
         return {
           ...state,
           seenNumber: true,
-          fraction: [...state.fraction, { type, value: part.value, key: `decimal:${nextIndex(type)}` }],
+          fraction: [
+            ...state.fraction,
+            { type, value: part.value, key: `decimal:${nextIndex(type)}` },
+          ],
         };
       case 'fraction':
-        return { ...state, fraction: [...state.fraction, ...fractionDigits(part.value, nextIndex)] };
+        return {
+          ...state,
+          fraction: [...state.fraction, ...fractionDigits(part.value, nextIndex)],
+        };
       default: {
-        const symbol: KeyedSymbolPart = { type, value: part.value, key: `${type}:${nextIndex(type)}` };
+        const symbol: KeyedSymbolPart = {
+          type,
+          value: part.value,
+          key: `${type}:${nextIndex(type)}`,
+        };
         return state.seenNumber
           ? { ...state, post: [...state.post, symbol] }
           : { ...state, pre: [...state.pre, symbol] };

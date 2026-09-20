@@ -22,7 +22,9 @@ jest.mock('react-native-reanimated', () => {
 
 type AnimatedStyle = { opacity: number; transform: { translateY: number }[] };
 // Reanimated's type for this helper is the web stub; the native Jest version returns the style.
-const getAnimatedStyle = getAnimatedStyleUntyped as unknown as (component: unknown) => AnimatedStyle;
+const getAnimatedStyle = getAnimatedStyleUntyped as unknown as (
+  component: unknown
+) => AnimatedStyle;
 
 const partId = (key: string) => `flow-part-${key}`;
 const glyphId = (key: string, n: number) => `flow-part-${key}-glyph-${n}`;
@@ -103,7 +105,9 @@ describe('NumberFlow', () => {
   test('throws for an invalid digits max', async () => {
     const silence = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-    await expect(render(<NumberFlow value={5} digits={{ 0: { max: 12 } }} />)).rejects.toThrow(RangeError);
+    await expect(render(<NumberFlow value={5} digits={{ 0: { max: 12 } }} />)).rejects.toThrow(
+      RangeError
+    );
 
     silence.mockRestore();
   });
@@ -223,11 +227,19 @@ describe('NumberFlow', () => {
     const onAnimationsStart = jest.fn();
     const onAnimationsFinish = jest.fn();
     const { rerender } = await render(
-      <NumberFlow value={1} onAnimationsStart={onAnimationsStart} onAnimationsFinish={onAnimationsFinish} />
+      <NumberFlow
+        value={1}
+        onAnimationsStart={onAnimationsStart}
+        onAnimationsFinish={onAnimationsFinish}
+      />
     );
 
     await rerender(
-      <NumberFlow value={2} onAnimationsStart={onAnimationsStart} onAnimationsFinish={onAnimationsFinish} />
+      <NumberFlow
+        value={2}
+        onAnimationsStart={onAnimationsStart}
+        onAnimationsFinish={onAnimationsFinish}
+      />
     );
     expect(onAnimationsStart).toHaveBeenCalledTimes(1);
     expect(onAnimationsFinish).not.toHaveBeenCalled();
@@ -240,7 +252,9 @@ describe('NumberFlow', () => {
 
   test('does not fire animation events when animated is false', async () => {
     const onAnimationsStart = jest.fn();
-    const { rerender } = await render(<NumberFlow value={1} animated={false} onAnimationsStart={onAnimationsStart} />);
+    const { rerender } = await render(
+      <NumberFlow value={1} animated={false} onAnimationsStart={onAnimationsStart} />
+    );
 
     await rerender(<NumberFlow value={2} animated={false} onAnimationsStart={onAnimationsStart} />);
 
@@ -263,7 +277,9 @@ describe('NumberFlow', () => {
   test('does not animate when the system prefers reduced motion', async () => {
     mockReducedMotion.value = true;
     const onAnimationsStart = jest.fn();
-    const { rerender } = await render(<NumberFlow value={1} onAnimationsStart={onAnimationsStart} />);
+    const { rerender } = await render(
+      <NumberFlow value={1} onAnimationsStart={onAnimationsStart} />
+    );
 
     await rerender(<NumberFlow value={2} onAnimationsStart={onAnimationsStart} />);
 
@@ -277,13 +293,17 @@ describe('NumberFlow', () => {
       <NumberFlow value={1} respectMotionPreference={false} onAnimationsStart={onAnimationsStart} />
     );
 
-    await rerender(<NumberFlow value={2} respectMotionPreference={false} onAnimationsStart={onAnimationsStart} />);
+    await rerender(
+      <NumberFlow value={2} respectMotionPreference={false} onAnimationsStart={onAnimationsStart} />
+    );
 
     expect(onAnimationsStart).toHaveBeenCalledTimes(1);
   });
 
   test('lets the continuous plugin spin unchanged lower digits a full turn', async () => {
-    const { rerender } = await render(<NumberFlow value={10} plugins={[continuous]} testID="flow" />);
+    const { rerender } = await render(
+      <NumberFlow value={10} plugins={[continuous]} testID="flow" />
+    );
     await layoutColumn('integer:0');
 
     await rerender(<NumberFlow value={20} plugins={[continuous]} testID="flow" />);

@@ -23,12 +23,8 @@ describe('continuous plugin', () => {
   test('spins an unchanged lower digit one full revolution in the trend direction', () => {
     const digit = { pos: 0, length: 10 };
 
-    expect(
-      continuous.getDelta(0, 0, digit, { trend: 1, state: { startingPos: 1 } })
-    ).toBe(10);
-    expect(
-      continuous.getDelta(0, 0, digit, { trend: -1, state: { startingPos: 1 } })
-    ).toBe(-10);
+    expect(continuous.getDelta(0, 0, digit, { trend: 1, state: { startingPos: 1 } })).toBe(10);
+    expect(continuous.getDelta(0, 0, digit, { trend: -1, state: { startingPos: 1 } })).toBe(-10);
   });
 
   test('leaves changed digits and higher digits to the default delta', () => {

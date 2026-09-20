@@ -62,7 +62,10 @@ describe('formatToData', () => {
   });
 
   test('puts currency symbols before the number in pre and units after in post', () => {
-    const usd = formatToData(12, new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }));
+    const usd = formatToData(
+      12,
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+    );
     const pct = formatToData(0.5, new Intl.NumberFormat('en-US', { style: 'percent' }));
 
     expect(usd.pre).toEqual([{ type: 'currency', value: '$', key: 'currency:0' }]);

@@ -5,7 +5,12 @@ export type { ContinuousState } from './plugins';
 export { useCanAnimate } from './hooks/useCanAnimate';
 export { formatToData } from './formatter';
 export { getDigitDelta } from './delta';
-export { linearEasing, DEFAULT_LINEAR_POINTS, DEFAULT_TRANSFORM_TIMING, DEFAULT_OPACITY_TIMING } from './easing';
+export {
+  linearEasing,
+  DEFAULT_LINEAR_POINTS,
+  DEFAULT_TRANSFORM_TIMING,
+  DEFAULT_OPACITY_TIMING,
+} from './easing';
 export type {
   NumberFlowProps,
   AnimationProps,

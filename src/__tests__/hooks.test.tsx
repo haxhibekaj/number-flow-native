@@ -46,7 +46,11 @@ describe('useAnimationsLifecycle', () => {
     const onStart = jest.fn();
     const onFinish = jest.fn();
     const { result } = await renderHook(() =>
-      useAnimationsLifecycle({ duration: 500, onAnimationsStart: onStart, onAnimationsFinish: onFinish })
+      useAnimationsLifecycle({
+        duration: 500,
+        onAnimationsStart: onStart,
+        onAnimationsFinish: onFinish,
+      })
     );
 
     await act(() => {
@@ -68,7 +72,9 @@ describe('useAnimationsLifecycle', () => {
 
   test('extends the finish deadline when a new update arrives mid-flight', async () => {
     const onFinish = jest.fn();
-    const { result } = await renderHook(() => useAnimationsLifecycle({ duration: 500, onAnimationsFinish: onFinish }));
+    const { result } = await renderHook(() =>
+      useAnimationsLifecycle({ duration: 500, onAnimationsFinish: onFinish })
+    );
 
     await act(() => result.current.notifyUpdate());
     await act(() => jest.advanceTimersByTime(400));
@@ -82,7 +88,9 @@ describe('useAnimationsLifecycle', () => {
 
   test('finishNow fires finish immediately only when animations are in flight', async () => {
     const onFinish = jest.fn();
-    const { result } = await renderHook(() => useAnimationsLifecycle({ duration: 500, onAnimationsFinish: onFinish }));
+    const { result } = await renderHook(() =>
+      useAnimationsLifecycle({ duration: 500, onAnimationsFinish: onFinish })
+    );
 
     await act(() => result.current.finishNow());
     expect(onFinish).not.toHaveBeenCalled();
@@ -99,7 +107,8 @@ describe('useAnimationsLifecycle', () => {
     const first = jest.fn();
     const second = jest.fn();
     const { result, rerender } = await renderHook(
-      ({ cb }: { cb: () => void }) => useAnimationsLifecycle({ duration: 100, onAnimationsFinish: cb }),
+      ({ cb }: { cb: () => void }) =>
+        useAnimationsLifecycle({ duration: 100, onAnimationsFinish: cb }),
       { initialProps: { cb: first } }
     );
 

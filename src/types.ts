@@ -2,10 +2,7 @@ import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 /** Intl part types with the plus and minus signs merged into a single `sign` type. */
 export type NumberPartType =
-  | Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'>
-  | 'sign'
-  | 'prefix'
-  | 'suffix';
+  Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'> | 'sign' | 'prefix' | 'suffix';
 
 export type NumberPartKey = string;
 

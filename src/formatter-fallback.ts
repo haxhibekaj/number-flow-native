@@ -6,13 +6,7 @@
  */
 
 type FallbackPartType =
-  | 'integer'
-  | 'fraction'
-  | 'group'
-  | 'decimal'
-  | 'minusSign'
-  | 'plusSign'
-  | 'literal';
+  'integer' | 'fraction' | 'group' | 'decimal' | 'minusSign' | 'plusSign' | 'literal';
 
 export type FallbackPart = { type: FallbackPartType; value: string };
 
