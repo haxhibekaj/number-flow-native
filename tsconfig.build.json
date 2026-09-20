@@ -4,9 +4,14 @@
     "noEmit": false,
     "outDir": "lib",
     "rootDir": "src",
+    // CommonJS so `main` is loadable by Node-based tooling. Metro and bundlers
+    // read the `react-native` / `source` fields and compile from src instead.
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["react-native"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "lib", "example", "**/*.test.ts", "**/*.test.tsx", "src/__tests__"]
