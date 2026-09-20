@@ -11,13 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # No version here on purpose: `packageManager` in package.json pins pnpm,
+      # and setting both makes the action fail on the conflict.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       # --ignore-scripts skips the `prepare` build; the build step below covers it.
