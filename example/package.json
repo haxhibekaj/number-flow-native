@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-native-masked-view/masked-view": "0.3.2",
     "expo": "~57.0.0",
+    "expo-linear-gradient": "~57.0.2",
     "expo-status-bar": "~57.0.1",
     "number-flow-native": "workspace:*",
     "react": "19.2.3",

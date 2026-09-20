@@ -104,5 +104,9 @@ export type NumberFlowProps = AnimationProps & {
   style?: StyleProp<TextStyle>;
   /** Style for the root row container. */
   containerStyle?: StyleProp<ViewStyle>;
+  /** Height of the top and bottom fade, in points. Defaults to `0.25em`. 0 disables it. */
+  maskHeight?: number;
+  /** Width of the left and right fade, in points. Defaults to `0.5em`. 0 disables it. */
+  maskWidth?: number;
   testID?: string;
 };

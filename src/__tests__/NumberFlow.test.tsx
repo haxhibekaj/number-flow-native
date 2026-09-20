@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 import { getAnimatedStyle as getAnimatedStyleUntyped } from 'react-native-reanimated';
 import NumberFlow from '../components/NumberFlow';
@@ -69,6 +70,28 @@ describe('NumberFlow', () => {
     expect(within(screen.getByTestId(partId('prefix:0'))).getByText('~')).toBeTruthy();
     expect(within(screen.getByTestId(partId('currency:0'))).getByText('$')).toBeTruthy();
     expect(within(screen.getByTestId(partId('suffix:0'))).getByText('/mo')).toBeTruthy();
+  });
+
+  test('pads each glyph by half the mask height so digits travel the web distance', async () => {
+    await render(<NumberFlow value={42} style={{ fontSize: 40 }} testID="flow" />);
+
+    // fontSize 40 -> mask height 10, half 5.
+    const glyph = screen.getByTestId(glyphId('integer:0', 4));
+    expect(StyleSheet.flatten(glyph.props.style)).toMatchObject({ paddingVertical: 5 });
+  });
+
+  test('pads symbols outside the mask by the full mask height to align them', async () => {
+    await render(<NumberFlow value={12} prefix="~" style={{ fontSize: 40 }} testID="flow" />);
+
+    const prefix = within(screen.getByTestId(partId('prefix:0'))).getByText('~');
+    expect(StyleSheet.flatten(prefix.props.style)).toMatchObject({ paddingVertical: 10 });
+  });
+
+  test('drops the fade padding when the mask is disabled', async () => {
+    await render(<NumberFlow value={42} style={{ fontSize: 40 }} maskHeight={0} testID="flow" />);
+
+    const glyph = screen.getByTestId(glyphId('integer:0', 4));
+    expect(StyleSheet.flatten(glyph.props.style)).toMatchObject({ paddingVertical: 0 });
   });
 
   test('sizes a column from digits max', async () => {

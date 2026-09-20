@@ -10,14 +10,16 @@ digits are added or removed. Pure JS/TS, no native code, works in Expo Go.
 ## Install
 
 ```sh
-npx expo install number-flow-native react-native-reanimated react-native-worklets
+npx expo install number-flow-native react-native-reanimated react-native-worklets \
+  @react-native-masked-view/masked-view expo-linear-gradient
 ```
 
-Bare React Native: `npm i number-flow-native react-native-reanimated react-native-worklets`
-and follow the Reanimated install guide (Babel plugin + pod install).
+Bare React Native: install the same packages with your package manager and
+follow the Reanimated install guide (Babel plugin + pod install).
 
 Peer requirements: React 18+, React Native 0.73+, Reanimated 3.6+ (4.x on
-Expo SDK 53+).
+Expo SDK 53+). The masked view and linear gradient render the edge fade and are
+required; both are bundled with Expo Go.
 
 ## Usage
 
@@ -57,6 +59,8 @@ function Price({ value }: { value: number }) {
 | `onAnimationsStart` / `onAnimationsFinish` | `() => void` | | Fired once per burst of updates. |
 | `style` | `TextStyle` | `fontVariant: ['tabular-nums']` | Applied to every glyph. |
 | `containerStyle` | `ViewStyle` | | Applied to the root row. |
+| `maskHeight` | `number` | `0.25em` | Height of the top and bottom fade. `0` disables it. |
+| `maskWidth` | `number` | `0.5em` | Width of the left and right fade. `0` disables it. |
 
 Easing functions must be Reanimated worklets: anything from `Easing`, or
 `linearEasing([...])` which reproduces CSS `linear()` curves:
@@ -91,6 +95,33 @@ import { useCanAnimate } from 'number-flow-native';
 const canAnimate = useCanAnimate({ respectMotionPreference: true });
 ```
 
+## Line height
+
+Digits are laid out with `lineHeight` equal to `fontSize`, matching the web
+version's `line-height: 1`. This is what fixes how far a digit travels per step,
+so a spin covers the same distance it does on the web. Set `lineHeight` in
+`style` to override it, and expect the motion to change with it.
+
+## Intl support
+
+Formatting comes from `Intl.NumberFormat`, so what you get depends on the ICU
+data in your JavaScript engine, not on this library. Some React Native engines
+ship a reduced Intl: in Expo Go on iOS, `formatToParts` is missing entirely, and
+`notation: 'compact'`, `signDisplay` and `minimumIntegerDigits` are ignored.
+
+When `formatToParts` is unavailable this library falls back to parsing the
+formatted string, so digits, grouping, the decimal separator and the sign still
+animate correctly. For full parity with the web, add a polyfill:
+
+```sh
+npx expo install @formatjs/intl-numberformat
+```
+
+```ts
+import '@formatjs/intl-numberformat/polyfill';
+import '@formatjs/intl-numberformat/locale-data/en';
+```
+
 ## Accessibility
 
 The root view is announced as a single text element with the fully formatted
@@ -98,10 +129,10 @@ value as its label. Individual glyphs are hidden from assistive technology.
 
 ## Differences from the web version
 
-- Layout transitions use Reanimated layout animations instead of measured FLIP transforms.
+- Horizontal motion uses Reanimated layout animations plus an animated container width, rather than the web's measured FLIP transforms. Digits stay grouped through a width change, but the two are not frame-identical.
 - Removed digits fade out at their last value rather than spinning to 0 first.
 - Digit columns default to tabular figures so every column shares one width. Pass your own `fontVariant` in `style` to override.
-- No gradient mask at the top and bottom of digit columns yet; columns clip with `overflow: hidden`.
+- The edge fade is a masked view with two linear gradients whose alphas combine. The web uses four extra radial gradients to soften the corners; the combined alphas approximate them.
 - `NumberFlowGroup`, `isolate`, `willChange`, SSR helpers and CSS `::part` styling have no RN equivalent and are not included.
 - `onAnimationsFinish` fires after the longest configured timing elapses with no further updates.
 

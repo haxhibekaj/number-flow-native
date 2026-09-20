@@ -11,6 +11,9 @@ type Props = {
   height: SharedValue<number>;
   /** The glyph that stays in normal flow to give the column its size. */
   isSizer: boolean;
+  /** Vertical padding on each glyph, half the mask height, as on the web. */
+  paddingVertical: number;
+  baseTextStyle: TextStyle;
   textStyle: StyleProp<TextStyle>;
   testID?: string;
 };
@@ -22,6 +25,8 @@ export const DigitGlyph = memo(function DigitGlyph({
   position,
   height,
   isSizer,
+  paddingVertical,
+  baseTextStyle,
   textStyle,
   testID,
 }: Props) {
@@ -37,7 +42,14 @@ export const DigitGlyph = memo(function DigitGlyph({
   return (
     <Animated.Text
       testID={testID}
-      style={[styles.text, isSizer ? null : styles.stackedGlyph, textStyle, animatedStyle]}
+      style={[
+        styles.text,
+        isSizer ? null : styles.stackedGlyph,
+        baseTextStyle,
+        textStyle,
+        { paddingVertical },
+        animatedStyle,
+      ]}
     >
       {n}
     </Animated.Text>

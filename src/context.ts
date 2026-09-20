@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 import type { ComponentProps } from 'react';
 import type { StyleProp, TextStyle } from 'react-native';
 import type Animated from 'react-native-reanimated';
+import type { MaskGeometry } from './mask';
 import type { Digits, Plugin, ResolvedTiming } from './types';
 
 type AnimatedViewProps = ComponentProps<typeof Animated.View>;
@@ -19,10 +20,18 @@ export type FlowContextValue = {
   /** Per-plugin state returned by `onUpdate`, aligned with `plugins`. */
   pluginState: unknown[];
   spinTiming: ResolvedTiming;
-  layoutAnimation: AnimatedViewProps['layout'];
-  enterAnimation: AnimatedViewProps['entering'];
-  exitAnimation: AnimatedViewProps['exiting'];
+  /**
+   * Factories, not shared instances: Reanimated's builders are mutable
+   * (`.duration()` returns `this`), so handing the same object to every digit
+   * lets them clobber each other's config.
+   */
+  createLayout: () => AnimatedViewProps['layout'];
+  createEnter: () => AnimatedViewProps['entering'];
+  createExit: () => AnimatedViewProps['exiting'];
+  /** Defaults applied before the caller's `style`, so they stay overridable. */
+  baseTextStyle: TextStyle;
   textStyle: StyleProp<TextStyle>;
+  mask: MaskGeometry;
 };
 
 export const FlowContext = createContext<FlowContextValue | null>(null);

@@ -95,9 +95,9 @@ export function Digit({ part, testID }: Props) {
       testID={testID}
       style={styles.column}
       onLayout={onLayout}
-      layout={flow.layoutAnimation}
-      entering={flow.animateIn ? flow.enterAnimation : undefined}
-      exiting={flow.exitAnimation}
+      layout={flow.createLayout()}
+      entering={flow.animateIn ? flow.createEnter() : undefined}
+      exiting={flow.createExit()}
     >
       {glyphs.map((n) => (
         <DigitGlyph
@@ -107,6 +107,8 @@ export function Digit({ part, testID }: Props) {
           position={position}
           height={height}
           isSizer={n === 0}
+          paddingVertical={flow.mask.halfMaskHeight}
+          baseTextStyle={flow.baseTextStyle}
           textStyle={flow.textStyle}
           testID={testID ? `${testID}-glyph-${n}` : undefined}
         />

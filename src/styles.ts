@@ -10,9 +10,16 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
-  column: {
-    overflow: 'hidden',
+  /**
+   * The digits inside the mask. `alignSelf` keeps this row at its natural width
+   * even while the box animating around it is a different size.
+   */
+  measuredRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    alignSelf: 'flex-start',
   },
+  column: {},
   text: {
     fontVariant: ['tabular-nums'],
   },
@@ -21,4 +28,8 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
+  maskFill: { flex: 1 },
+  maskColumn: { flex: 1 },
+  maskRow: { flex: 1, flexDirection: 'row' },
+  maskCore: { flex: 1, backgroundColor: 'rgb(0,0,0)' },
 });

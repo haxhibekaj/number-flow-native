@@ -2,12 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { FlowContext, type FlowContextValue } from '../context';
 import { formatToData } from '../formatter';
+import { getFontSize, resolveMask } from '../mask';
 import { useAnimationsLifecycle } from '../hooks/useAnimationsLifecycle';
 import { useCanAnimate } from '../hooks/useCanAnimate';
 import { useFormatter } from '../hooks/useFormatter';
 import { styles } from '../styles';
 import { longestDuration, resolveTimings } from '../timing';
 import type { Data, NumberFlowProps, Plugin, Trend } from '../types';
+import { NumberBox } from './NumberBox';
+import { NumberMask } from './NumberMask';
 import { Section } from './Section';
 
 const DEFAULT_TREND: Trend = (oldValue, value) => Math.sign(value - oldValue);
@@ -48,6 +51,8 @@ export default function NumberFlow({
   trend = DEFAULT_TREND,
   digits,
   plugins = NO_PLUGINS,
+  maskHeight,
+  maskWidth,
   onAnimationsStart,
   onAnimationsFinish,
 }: NumberFlowProps) {
@@ -65,6 +70,16 @@ export default function NumberFlow({
   const canAnimate = useCanAnimate({ respectMotionPreference });
   const computedAnimated = animated && canAnimate;
   const animateIn = useIsMounted();
+
+  const fontSize = getFontSize(style);
+  const mask = useMemo(
+    () => resolveMask(fontSize, maskHeight, maskWidth),
+    [fontSize, maskHeight, maskWidth]
+  );
+  // The web pins `line-height: 1`, which fixes a digit's box at `1em` and so
+  // fixes how far it travels per step. React Native would otherwise use the
+  // font's natural line height, making every spin overshoot the web version.
+  const baseTextStyle = useMemo(() => ({ lineHeight: fontSize }), [fontSize]);
 
   const timings = useMemo(
     () => resolveTimings({ transformTiming, spinTiming, opacityTiming }),
@@ -105,18 +120,31 @@ export default function NumberFlow({
       plugins,
       pluginState,
       spinTiming: spin,
-      layoutAnimation: computedAnimated
-        ? LinearTransition.duration(transform.duration).easing(transform.easing)
-        : undefined,
-      enterAnimation: computedAnimated
-        ? FadeIn.duration(opacity.duration).easing(opacity.easing)
-        : undefined,
-      exitAnimation: computedAnimated
-        ? FadeOut.duration(opacity.duration).easing(opacity.easing)
-        : undefined,
+      createLayout: () =>
+        computedAnimated
+          ? LinearTransition.duration(transform.duration).easing(transform.easing)
+          : undefined,
+      createEnter: () =>
+        computedAnimated ? FadeIn.duration(opacity.duration).easing(opacity.easing) : undefined,
+      createExit: () =>
+        computedAnimated ? FadeOut.duration(opacity.duration).easing(opacity.easing) : undefined,
+      baseTextStyle,
       textStyle: style,
+      mask,
     };
-  }, [timings, computedAnimated, animateIn, data, computedTrend, digits, plugins, pluginState, style]);
+  }, [
+    timings,
+    computedAnimated,
+    animateIn,
+    data,
+    computedTrend,
+    digits,
+    plugins,
+    pluginState,
+    style,
+    mask,
+    baseTextStyle,
+  ]);
 
   return (
     <Animated.View
@@ -125,12 +153,20 @@ export default function NumberFlow({
       accessibilityRole="text"
       accessibilityLabel={data.valueAsString}
       style={[styles.root, containerStyle]}
-      layout={flow.layoutAnimation}
     >
       <FlowContext.Provider value={flow}>
         <Section parts={data.pre} testID={testID} />
-        <Section parts={data.integer} testID={testID} />
-        <Section parts={data.fraction} testID={testID} />
+        <NumberMask mask={mask}>
+          <NumberBox
+            timing={timings.transform}
+            animated={computedAnimated}
+            paddingHorizontal={mask.maskWidth}
+            paddingVertical={mask.halfMaskHeight}
+          >
+            <Section parts={data.integer} masked testID={testID} />
+            <Section parts={data.fraction} masked testID={testID} />
+          </NumberBox>
+        </NumberMask>
         <Section parts={data.post} testID={testID} />
       </FlowContext.Provider>
     </Animated.View>

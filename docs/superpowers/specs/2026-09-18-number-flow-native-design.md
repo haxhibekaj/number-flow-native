@@ -20,6 +20,9 @@ Pure JS/TS, no native code, so it runs in Expo Go and in any bare RN app.
 | Animation engine | `react-native-reanimated` (peer, >=3.6) | Bundled with Expo, UI-thread timing, layout/entering/exiting animations replace the FLIP measurement pass the web version needs. |
 | Layout shifts | Reanimated layout animations (`LinearTransition`, `FadeIn`, `FadeOut`) | Web NumberFlow measures before/after and animates deltas. RN has no sync layout reads, but Reanimated does the same job declaratively. |
 | Digit widths | `fontVariant: ['tabular-nums']` by default | Digit columns share one width so we never measure per-glyph widths. Overridable via `style`. |
+| Edge fade | `@react-native-masked-view/masked-view` + `expo-linear-gradient`, nested horizontal and vertical gradients | Required for parity: the web masks the number rather than clipping it. Both packages ship in Expo Go. |
+| Glyph box | `lineHeight` forced to `fontSize` | The web sets `line-height: 1`, which fixes travel distance per step at `1em + maskHeight`. RN's natural line height (~1.19em) made every spin overshoot. |
+| Container width | Animated with the transform timing via `NumberBox` | The web animates the number's box; letting it snap while children slide made the right edge jump. |
 | Build | `tsc` → `lib/` (JS + d.ts); `react-native` field points at `src/` | Metro compiles TS from source; bundlers/TS get `lib/`. No Bob/Babel build pipeline needed. |
 | Tests | Jest with `@react-native/jest-preset` + `@testing-library/react-native` 14 (async API) + Reanimated's `setUpTests()` and the `react-native-worklets/jest/resolver` | One runner for pure logic and component tests. |
 | Dev dependency versions | Pinned to Expo SDK 57's expectations (RN 0.86.3, React 19.2.3, Reanimated 4.5.1, Worklets 0.10.1) | With pnpm's hoisted linker the example and the library share one tree, and `expo install --check` must pass. |
@@ -144,6 +147,26 @@ Verification on 2026-09-18: 61 Jest tests pass at 97.9% statement coverage,
 `tsc` clean for library and example, `expo install --check` clean, and
 `expo export --platform ios` bundles the example (962 modules) to Hermes bytecode.
 
-Not yet verified: running on a device or simulator. Layout animations,
-`overflow: hidden` clipping of the digit columns, and the `onLayout` height
-measurement need a visual check in the example app.
+Verified on an iPhone 17 Pro simulator in Expo Go (2026-09-19/20): the mask
+fade, the per-digit spin and the width animation were confirmed from 60fps
+screen recordings.
+
+Findings from that run, all addressed:
+
+1. Digits travelled ~15% too far per step because RN's natural line height is
+   taller than the web's `line-height: 1`. Fixed by pinning `lineHeight` to
+   `fontSize`.
+2. The masked container's width snapped while its children slid, so the right
+   edge jumped. Fixed by animating the box width on the transform timing.
+3. A single mutable Reanimated builder was shared by every digit and symbol.
+   Replaced with per-component factories.
+4. Expo Go's iOS engine has a reduced Intl: no `formatToParts`, and
+   `notation: 'compact'`, `signDisplay` and `minimumIntegerDigits` are ignored.
+   The fallback parser handles this correctly; documented with a polyfill
+   recommendation in the README.
+
+Still not frame-identical to the web: horizontal motion relies on Reanimated
+layout animations rather than the web's measured FLIP, so a group separator
+being inserted briefly shows a gap. Closing that fully would mean computing
+each part's x position from cached glyph widths and driving translateX with the
+same `withTiming` curve as the spin.
