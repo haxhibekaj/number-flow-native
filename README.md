@@ -102,12 +102,34 @@ version's `line-height: 1`. This is what fixes how far a digit travels per step,
 so a spin covers the same distance it does on the web. Set `lineHeight` in
 `style` to override it, and expect the motion to change with it.
 
+## Bare React Native
+
+`expo-linear-gradient` draws the fade and depends on `expo-modules-core`. In an
+app without Expo, install the Expo modules first:
+
+```sh
+npx install-expo-modules@latest
+```
+
+Everything else in this package is plain JavaScript and needs no native code of
+its own.
+
+## Platform support
+
+Verified on iOS and Android. The per-digit spin, the edge fade and the width
+animation were checked from screen recordings on an iPhone simulator, and the
+package was confirmed to build and run on an Android emulator.
+
+Note that `Intl` differs between the two, which changes formatting but not
+animation. See below.
+
 ## Intl support
 
 Formatting comes from `Intl.NumberFormat`, so what you get depends on the ICU
 data in your JavaScript engine, not on this library. Some React Native engines
-ship a reduced Intl: in Expo Go on iOS, `formatToParts` is missing entirely, and
-`notation: 'compact'`, `signDisplay` and `minimumIntegerDigits` are ignored.
+ship a reduced Intl. Measured in Expo Go: Android has full ICU, while iOS is
+missing `formatToParts` entirely and ignores `notation: 'compact'`,
+`signDisplay` and `minimumIntegerDigits`.
 
 When `formatToParts` is unavailable this library falls back to parsing the
 formatted string, so digits, grouping, the decimal separator and the sign still

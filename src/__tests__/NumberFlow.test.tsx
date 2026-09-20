@@ -274,6 +274,26 @@ describe('NumberFlow', () => {
     expect(onAnimationsStart).toHaveBeenCalledTimes(1);
   });
 
+  test('holds a constant value steady while its parent re-renders repeatedly', async () => {
+    // The example app re-renders on a timer and passes fresh `plugins` and
+    // `format` objects each time, which rebuilds the flow context on every
+    // render. A value that never changes must not drift or gain columns.
+    const view = () => (
+      <NumberFlow
+        value={0}
+        plugins={[continuous]}
+        format={{ signDisplay: 'exceptZero' }}
+        testID="flow"
+      />
+    );
+    const { rerender } = await render(view());
+
+    for (let i = 0; i < 30; i++) await rerender(view());
+
+    expect(screen.getByTestId('flow').props.accessibilityLabel).toBe('0');
+    expect(screen.queryByTestId(partId('integer:1'))).toBeNull();
+  });
+
   test('does not animate when the system prefers reduced motion', async () => {
     mockReducedMotion.value = true;
     const onAnimationsStart = jest.fn();
