@@ -38,6 +38,14 @@ jobs:
         run: |
           set -euo pipefail
           npm pack --silent
-          tar -tzf number-flow-native-*.tgz | grep -q 'package/lib/index.js'
-          tar -tzf number-flow-native-*.tgz | grep -q 'package/lib/index.d.ts'
-          tar -tzf number-flow-native-*.tgz | grep -q 'package/src/index.ts'
+          # Listed once into a variable: piping tar into `grep -q` makes grep
+          # exit early, and the resulting SIGPIPE fails the step under pipefail.
+          contents=$(tar -tzf number-flow-native-*.tgz)
+          for entry in package/lib/index.js package/lib/index.d.ts package/src/index.ts; do
+            if grep -qx "$entry" <<< "$contents"; then
+              echo "ok   $entry"
+            else
+              echo "missing $entry"
+              exit 1
+            fi
+          done
